@@ -72,7 +72,7 @@ jobs:
           path: dist/BudgetTracker.exe
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: windows-app
     runs-on: ubuntu-latest
     permissions:
@@ -82,7 +82,14 @@ jobs:
         with:
           name: BudgetTracker-Windows
           path: release
-      - uses: softprops/action-gh-release@v2
-        with:
-          files: release/BudgetTracker.exe
-
+      - name: Publish first Windows release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v1.0.0 >/dev/null 2>&1; then
+            echo "Release v1.0.0 already exists; keeping the published version."
+          else
+            gh release create v1.0.0 release/BudgetTracker.exe \
+              --title "Budget Tracker v1.0.0" \
+              --notes "Desktop expense tracker with editing, filters, monthly budgets, charts, CSV/Excel/PDF reports and SQLite backups. Built from tested sources by GitHub Actions."
+          fi
