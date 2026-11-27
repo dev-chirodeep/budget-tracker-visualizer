@@ -1,0 +1,12 @@
+# Python cache and environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local expense data and generated benchmark output
+*.db
+*.sqlite3
+benchmark_results.csv
+*.log
