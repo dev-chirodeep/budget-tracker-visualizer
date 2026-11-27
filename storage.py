@@ -1,7 +1,4 @@
-"""SQLite persistence for the Budget Tracker & Visualizer.
-
-Existing expenses.db files remain compatible with the ExpenseLog schema.
-"""
+"""Database operations for the expense tracker."""
 from __future__ import annotations
 
 import datetime as dt
@@ -34,7 +31,10 @@ class ExpenseStore:
     @staticmethod
     def _validated(date: str, payee: str, description: str, category: str,
                    amount: float, mode: str) -> tuple:
-        dt.date.fromisoformat(date)
+        try:
+            dt.date.fromisoformat(date)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Enter a valid date (YYYY-MM-DD).") from exc
         payee, description, category, mode = (
             str(value).strip() for value in (payee, description, category, mode)
         )
@@ -85,7 +85,7 @@ class ExpenseStore:
     def list_expenses(self, search: str = "") -> list[dict]:
         term = search.strip()
         if term:
-            # Match literal user text; protect SQL query from wildcard expansion.
+            # Treat % and _ as ordinary characters in the search box.
             escaped = term.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
             rows = self.conn.execute("""
                 SELECT * FROM ExpenseLog

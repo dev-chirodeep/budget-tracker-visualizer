@@ -36,6 +36,28 @@ class ExpenseStoreTests(unittest.TestCase):
         self.assertEqual(self.store.summary("Category"), [("Food", 185.5)])
         self.assertEqual(len(self.store.list_expenses("%")), 0)
 
+    def test_reporting_groups_and_clear(self):
+        self.add("Cafe", 100, "2026-01-01")
+        self.store.add("2026-02-01", "Shop", "Books", "Shopping", 200, "Cash")
+        expected = {
+            "Payment method": [("Cash", 200.0), ("UPI", 100.0)],
+            "Payee": [("Shop", 200.0), ("Cafe", 100.0)],
+            "Category": [("Shopping", 200.0), ("Food", 100.0)],
+            "Month": [("2026-02", 200.0), ("2026-01", 100.0)],
+        }
+        for group, totals in expected.items():
+            self.assertEqual(self.store.summary(group), totals)
+        self.assertEqual(self.store.clear(), 2)
+        self.assertEqual(self.store.total(), 0)
+        self.assertEqual(self.store.list_expenses(), [])
+
+    def test_literal_search(self):
+        self.add("Shop_10%", 50)
+        self.add("ShopA100", 60)
+        self.assertEqual(len(self.store.list_expenses("_10%")), 1)
+        self.assertEqual(len(self.store.list_expenses("%")), 1)
+        self.assertEqual(len(self.store.list_expenses("Lunch")), 2)
+
     def test_validation_and_safe_grouping(self):
         for amount in (0, -2, "bad", float("nan"), float("inf")):
             with self.assertRaises(ValueError):

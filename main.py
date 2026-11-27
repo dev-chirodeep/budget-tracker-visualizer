@@ -1,7 +1,8 @@
-"""Budget Tracker & Visualizer GUI. Run with: python main.py"""
+"""Tkinter interface for the expense tracker."""
 from __future__ import annotations
 
 import datetime as dt
+import sqlite3
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
@@ -89,6 +90,9 @@ class BudgetTracker(tk.Tk):
         bar = ttk.Scrollbar(table_frame, orient="vertical", command=self.table.yview)
         self.table.configure(yscrollcommand=bar.set)
         bar.pack(side="right", fill="y")
+        horizontal = ttk.Scrollbar(table_frame, orient="horizontal", command=self.table.xview)
+        self.table.configure(xscrollcommand=horizontal.set)
+        horizontal.pack(side="bottom", fill="x")
         self.table.pack(fill="both", expand=True)
         self.table.bind("<Double-1>", lambda _e: self.load_selected())
 
@@ -118,6 +122,8 @@ class BudgetTracker(tk.Tk):
             self.refresh()
         except (ValueError, OverflowError) as exc:
             messagebox.showwarning("Check expense details", str(exc))
+        except sqlite3.Error as exc:
+            messagebox.showerror("Database error", str(exc))
 
     def _selected_id(self) -> int | None:
         selection = self.table.selection()
@@ -159,7 +165,7 @@ class BudgetTracker(tk.Tk):
             values = tuple(f"{record[c]:.2f}" if c == "Amount" else record[c]
                            for c in ("ID", "Date", "Payee", "Description", "Category", "Amount", "Mode"))
             self.table.insert("", "end", values=values)
-        self.total_label.configure(text=f"Total spending: INR {self.store.total():,.2f}")
+        self.total_label.configure(text=f"Total spending (all records): INR {self.store.total():,.2f}")
 
     def clear_search(self) -> None:
         self.search_text.set("")
@@ -203,7 +209,7 @@ class BudgetTracker(tk.Tk):
         plt.show()
 
     def export(self, format_name: str) -> None:
-        records = self.store.list_expenses()  # Always export the complete dataset.
+        records = self.store.list_expenses()  # Export all records, even when search is active.
         if not records:
             messagebox.showinfo("No data", "Add expenses before exporting.")
             return

@@ -1,4 +1,4 @@
-"""Reproducible local benchmark; synthetic data only, not a product claim."""
+"""Measure query and report export times using sample expenses."""
 import argparse
 import csv
 import random
@@ -39,8 +39,11 @@ def main():
             results = {}
             for group in ("Payment method", "Payee", "Category", "Month"):
                 results[f"SQL {group}"] = timed(lambda g=group: db.summary(g), args.repeats)
-            for fmt, fn in (("CSV", export_csv), ("Excel", export_excel), ("PDF", export_pdf)):
-                path = Path(directory) / f"bench.{ {'CSV':'csv','Excel':'xlsx','PDF':'pdf'}[fmt] }"
+            exports = (("CSV", "csv", export_csv),
+                       ("Excel", "xlsx", export_excel),
+                       ("PDF", "pdf", export_pdf))
+            for fmt, extension, fn in exports:
+                path = Path(directory) / f"bench.{extension}"
                 results[f"Export {fmt}"] = timed(lambda f=fn, p=path: f(rows, p), args.repeats)
             print(f"Synthetic rows: {args.rows}; repeats: {args.repeats}; median milliseconds")
             for name, ms in results.items():

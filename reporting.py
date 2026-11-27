@@ -1,4 +1,4 @@
-"""CSV, Excel and PDF exports, independent of the Tkinter GUI."""
+"""Save expense records in CSV, Excel or PDF format."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -30,16 +30,16 @@ def export_pdf(records: list[dict], filename: str | Path) -> None:
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.set_auto_page_break(auto=True, margin=14)
     pdf.add_page()
-    pdf.set_font("Arial", "B", 14)
-    pdf.cell(0, 10, "Budget Tracker - Expense Report", ln=1)
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(0, 10, "Budget Tracker - Expense Report", new_x="LMARGIN", new_y="NEXT")
     widths = (13, 25, 38, 68, 35, 30, 45)  # Fit within landscape A4.
 
     def header() -> None:
-        pdf.set_font("Arial", "B", 9)
+        pdf.set_font("Helvetica", "B", 9)
         for name, width in zip(FIELDS, widths):
             pdf.cell(width, 8, name, border=1)
         pdf.ln()
-        pdf.set_font("Arial", size=8)
+        pdf.set_font("Helvetica", size=8)
 
     header()
     for record in records:
@@ -50,8 +50,10 @@ def export_pdf(records: list[dict], filename: str | Path) -> None:
             value = _pdf_text(record.get(field, ""))
             if field == "Amount":
                 value = f"{float(record.get(field, 0)):,.2f}"
-            while len(value) > 1 and pdf.get_string_width(value) > width - 3:
-                value = value[:-1]
+            if pdf.get_string_width(value) > width - 3:
+                while value and pdf.get_string_width(value + "...") > width - 3:
+                    value = value[:-1]
+                value += "..."
             pdf.cell(width, 7, value, border=1)
         pdf.ln()
     pdf.output(str(filename))
