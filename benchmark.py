@@ -1,4 +1,4 @@
-"""Measure query and report export times using sample expenses."""
+"""Measure SQL report and export timings using synthetic expenses."""
 import argparse
 import csv
 import random
@@ -42,9 +42,10 @@ def main():
             exports = (("CSV", "csv", export_csv),
                        ("Excel", "xlsx", export_excel),
                        ("PDF", "pdf", export_pdf))
-            for fmt, extension, fn in exports:
+            for label, extension, exporter in exports:
                 path = Path(directory) / f"bench.{extension}"
-                results[f"Export {fmt}"] = timed(lambda f=fn, p=path: f(rows, p), args.repeats)
+                results[f"Export {label}"] = timed(
+                    lambda fn=exporter, output=path: fn(rows, output), args.repeats)
             print(f"Synthetic rows: {args.rows}; repeats: {args.repeats}; median milliseconds")
             for name, ms in results.items():
                 print(f"{name}: {ms} ms")

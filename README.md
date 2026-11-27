@@ -1,18 +1,37 @@
 # Budget Tracker & Visualizer
 
-I built this desktop application during my Python internship to make everyday expense tracking easier. It uses Tkinter for the interface, SQLite for local storage, and Matplotlib for spending charts. The project has since been updated with expense editing, search, and a separate reporting module.
+A small desktop app I built during my Python internship to keep track of everyday expenses. I started with a Tkinter form and SQLite database, then added spending charts and downloadable reports. I've continued improving it with editing, search, monthly budgets, filtering and backups.
+
+The app runs locally. You don't need an account, and your expense data isn't sent to a server.
+
+![Current Budget Tracker window](Images/Dashboard-current.png)
 
 ## What it does
 
-- Add, edit, search and delete expenses with a date, payee, description, category, amount and payment method.
-- View total spending and bar charts by category, payee, payment method or month.
-- View a category-wise pie chart to understand spending distribution.
-- Export expense records to CSV, Excel or PDF.
-- Keep records in a local SQLite database without needing an internet connection.
+- **Track expenses:** Add, edit and delete entries, with a date, payee, description, category, amount and payment method.
+- **Find records:** Search by text or narrow the list using a date range, category, payment method and amount range.
+- **See your spending:** View this month's total, lifetime spending, top category and average spending per day with recorded transactions.
+- **Set a budget:** Save a limit for the current month and see how much is left (or how far you've gone over).
+- **Create charts:** Compare expenses by month, category, payee or payment method. There's also a category pie chart.
+- **Export your records:** Save all entries to CSV, Excel or PDF. Exports use the complete database, even when a filter is active.
+- **Back up and restore:** Save a SQLite backup file and restore it later if needed.
+- **Switch themes:** Choose between light and dark mode while the app is running.
+
+### A look at the interface
+
+| Light | Dark |
+|---|---|
+| ![Light mode](Images/Dashboard-current.png) | ![Dark mode](Images/Dashboard-dark.png) |
+
+![Short demo of the actual app](Images/demo.gif)
+
+The screenshots and GIF use sample transactions created for the demo, not personal financial data.
 
 ## Getting started
 
-You will need Python 3.10 or later with Tkinter installed.
+Install **Python 3.10 or newer**. On Windows, download Python from [python.org](https://www.python.org/downloads/) and check *Add Python to PATH* during setup.
+
+Clone the repository, install its dependencies and start the app:
 
 ```bash
 git clone https://github.com/dev-chirodeep/budget-tracker-visualizer.git
@@ -21,53 +40,64 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-Fill in the expense details and click **Add expense**. To make changes, select an expense and click **Edit selected** (or double-click its row), update the form, and click **Save changes**. Use the search box to find records by date, payee, description, category or payment method. Charts, totals and exports use all recorded expenses, not just the search results.
+The app uses `expenses.db` beside `main.py` when running from source. If you already have expenses in that file, **make a backup before replacing or updating anything**. The original `ExpenseLog` database structure is preserved.
 
-## Screenshots
+When using the packaged Windows executable, the database is stored in your user profile's `AppData\\Local\\BudgetTracker` folder instead. A new installation starts with an empty database; it does not automatically copy an older source-code database. You can move data using the in-app **Back up data** and **Restore backup** buttons.
 
-These screenshots show the original internship version. The current interface has additional edit and search controls.
+## Using it
 
-| Dashboard | Pie chart |
-| --- | --- |
-| ![Expense dashboard](Images/Dashboard.png) | ![Category breakdown](Images/Pie%20Chart.png) |
+1. Enter a date, payee, description, category, amount and payment method, then choose **Add expense**.
+2. To make a correction, select an expense and choose **Edit selected** (or double-click it). Make your changes and choose **Save changes**.
+3. Use the **Find expenses** controls to search or filter the table. Choose **Reset filters** to see everything again.
+4. Set a monthly budget if you want to watch your spending against a limit.
+5. Use the buttons at the bottom to view charts or download a report.
 
-| Export options | Bar chart |
-| --- | --- |
-| ![Export options](Images/Export.png) | ![Spending chart](Images/Bar%20chart.png) |
+Data stays on your computer. Restoring a backup replaces the current database, so save a copy of your current data first. Deleting all expenses is also permanent unless you have a backup.
+
+## Download for Windows
+
+A Windows build is created by GitHub Actions. Open **Actions → Test and build**, choose a successful run and download the **BudgetTracker-Windows** artifact. Extract the ZIP and open `BudgetTracker.exe`.
+
+This is a student desktop project, not a cloud financial service. The executable is not code-signed, so Windows may show a SmartScreen warning. Inspect the source and only run builds from this repository.
 
 ## Project files
 
 | File | Purpose |
-| --- | --- |
-| `main.py` | Tkinter interface and charts |
-| `storage.py` | SQLite queries, expense validation and record management |
-| `reporting.py` | CSV, Excel and PDF exports |
-| `benchmark.py` | Reporting performance measurements using sample data |
-| `tests/test_storage.py` | Automated database and export tests |
-| `requirements.txt` | Python dependencies |
+|---|---|
+| `main.py` | Tkinter interface, filters, dashboard and charts |
+| `storage.py` | SQLite queries, validation, budgets and backup/restore |
+| `reporting.py` | CSV, Excel and PDF export |
+| `benchmark.py` | Local performance testing with made-up expense data |
+| `tests/` | Automated tests for storage and reports |
+| `scripts/` | GUI smoke test and screenshot/demo capture |
 
-## Testing
+The GUI is kept separate from the database and export code so each part is easier to test and change.
+
+## Tests and benchmarks
+
+To run the unit tests:
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-The tests use temporary databases to check expense management, searching, summaries, input validation and exports. They do not modify existing expense records.
-
-To measure reporting performance on your computer:
+To measure query and export times with a temporary database:
 
 ```bash
 python benchmark.py --rows 1000 --repeats 7
 ```
 
-The benchmark creates synthetic expenses, measures median SQL query and export times, and saves the results to `benchmark_results.csv`. It does not include GUI rendering or manual interaction. Times vary by machine.
+The benchmark generates **synthetic** records and saves `benchmark_results.csv` locally. These timings vary from one computer to another. They are not evidence of a percentage improvement over manual work.
 
-## Local data and limitations
+On GitHub, the **Test and build** workflow runs the tests, opens the desktop interface under a virtual display, captures the interface and creates a Windows build.
 
-The application opens `expenses.db` in the project folder, creating the table if needed. Back up this file before updating or deleting records. The older `tracker.db` file is not used by the current application; both existing database files are retained to avoid losing data. Do not commit personal expense records to a public repository.
+## Notes
 
-This is a local, single-user application. Login, cloud sync and spending alerts are possible future improvements. PDF exports may shorten long text and replace characters unsupported by the built-in font; CSV and Excel retain the full text.
+- All data is stored in SQLite; there is no login system, cloud sync or multi-user support.
+- PDF reports use a built-in font. Some Unicode characters may be replaced when exporting.
+- The repository originally contained `expenses.db` and `tracker.db`. They are retained for now to avoid deleting existing data without reviewing it. New database files are excluded by `.gitignore`. Do not commit personal financial information.
+- The screenshots are generated from a separate temporary test database.
 
 ## License
 
-MIT — see [License.txt](License.txt).
+MIT License. See [`License.txt`](License.txt).

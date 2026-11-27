@@ -1,11 +1,8 @@
-"""Save expense records in CSV, Excel or PDF format."""
+"""Export expenses to CSV, Excel and PDF."""
 from __future__ import annotations
-
 from pathlib import Path
-
 import pandas as pd
 from fpdf import FPDF
-
 from storage import FIELDS
 
 
@@ -22,17 +19,17 @@ def export_excel(records: list[dict], filename: str | Path) -> None:
 
 
 def _pdf_text(value: object) -> str:
-    # Core PDF fonts use Latin-1; replace unsupported Unicode safely.
+    # Helvetica cannot display every Unicode character.
     return str(value).encode("latin-1", errors="replace").decode("latin-1")
 
 
 def export_pdf(records: list[dict], filename: str | Path) -> None:
     pdf = FPDF(orientation="L", unit="mm", format="A4")
-    pdf.set_auto_page_break(auto=True, margin=14)
+    pdf.set_auto_page_break(auto=True, margin=12)
     pdf.add_page()
-    pdf.set_font("Helvetica", "B", 14)
-    pdf.cell(0, 10, "Budget Tracker - Expense Report", new_x="LMARGIN", new_y="NEXT")
-    widths = (13, 25, 38, 68, 35, 30, 45)  # Fit within landscape A4.
+    pdf.set_font("Helvetica", "B", 15)
+    pdf.cell(0, 11, "Budget Tracker - Expense Report", new_x="LMARGIN", new_y="NEXT")
+    widths = (13, 25, 38, 68, 35, 30, 45)
 
     def header() -> None:
         pdf.set_font("Helvetica", "B", 9)
