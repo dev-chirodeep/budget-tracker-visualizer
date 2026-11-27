@@ -89,6 +89,8 @@ python benchmark.py --rows 1000 --repeats 7
 
 The benchmark generates **synthetic** records and saves `benchmark_results.csv` locally. These timings vary from one computer to another. They are not evidence of a percentage improvement over manual work.
 
+For a larger scalability study (1,000, 10,000, 50,000 and 100,000 sample records), see the [measured results](benchmarks/scalability_report.md) and [raw CSV data](benchmarks/scalability_results.csv). You can reproduce those tests with `budget_tracker_scalability_benchmark.py`. The report also documents a PDF export limitation at higher record counts.
+
 On GitHub, the **Test and build** workflow runs the tests, opens the desktop interface under a virtual display, captures the interface and creates a Windows build.
 
 ## Notes

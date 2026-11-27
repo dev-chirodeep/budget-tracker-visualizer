@@ -1,0 +1,41 @@
+records,operation,median_ms,repeats,notes
+1000,Synthetic data setup (bulk insert),4.86,1,single transaction; not GUI insert
+1000,SQL Payment method,0.256,7,query only; excludes GUI
+1000,SQL Payee,0.263,7,query only; excludes GUI
+1000,SQL Category,0.203,7,query only; excludes GUI
+1000,SQL Month,0.51,7,query only; excludes GUI
+1000,Fetch all records,2.642,5,SELECT and Python dict conversion; excludes GUI
+1000,Export CSV,4.129,3,file size 55764 bytes; all 1000 rows
+1000,Export Excel,75.729,3,file size 36497 bytes; all 1000 rows
+1000,Export PDF,244.412,3,file size 87006 bytes; all 1000 rows
+1000,SQLite file size,,0,86016 bytes
+10000,Synthetic data setup (bulk insert),21.211,1,single transaction; not GUI insert
+10000,SQL Payment method,2.41,7,query only; excludes GUI
+10000,SQL Payee,2.49,7,query only; excludes GUI
+10000,SQL Category,2.53,7,query only; excludes GUI
+10000,SQL Month,5.935,7,query only; excludes GUI
+10000,Fetch all records,29.109,5,SELECT and Python dict conversion; excludes GUI
+10000,Export CSV,28.672,3,file size 567143 bytes; all 10000 rows
+10000,Export Excel,628.536,3,file size 303573 bytes; all 10000 rows
+10000,Export PDF,2456.88,3,file size 861409 bytes; all 10000 rows
+10000,SQLite file size,,0,643072 bytes
+50000,Synthetic data setup (bulk insert),110.16,1,single transaction; not GUI insert
+50000,SQL Payment method,13.351,7,query only; excludes GUI
+50000,SQL Payee,15.027,7,query only; excludes GUI
+50000,SQL Category,13.464,7,query only; excludes GUI
+50000,SQL Month,33.102,7,query only; excludes GUI
+50000,Fetch all records,178.83,5,SELECT and Python dict conversion; excludes GUI
+50000,Export CSV,158.664,3,file size 2879735 bytes; all 50000 rows
+50000,Export Excel,3254.643,3,file size 1524445 bytes; all 50000 rows
+50000,Export PDF,,0,not measured; 50k PDF exceeded 120-second run timeout
+50000,SQLite file size,,0,3162112 bytes
+100000,Synthetic data setup (bulk insert),201.518,1,single transaction; not GUI insert
+100000,SQL Payment method,31.507,7,query only; excludes GUI
+100000,SQL Payee,36.054,7,query only; excludes GUI
+100000,SQL Category,34.224,7,query only; excludes GUI
+100000,SQL Month,66.844,7,query only; excludes GUI
+100000,Fetch all records,373.3,5,SELECT and Python dict conversion; excludes GUI
+100000,Export CSV,283.227,3,file size 5770483 bytes; all 100000 rows
+100000,Export Excel,6846.753,3,file size 3061127 bytes; all 100000 rows
+100000,Export PDF,,0,not measured; 50k PDF exceeded 120-second run timeout
+100000,SQLite file size,,0,6320128 bytes
