@@ -31,16 +31,6 @@ jobs:
         run: xvfb-run -a python -m scripts.smoke_gui
       - name: Capture a sample screenshot
         run: xvfb-run -a python -m scripts.capture_screenshot
-      - name: Publish current screenshots to the repository
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Images/Dashboard-current.png Images/Dashboard-dark.png Images/demo.gif
-          if ! git diff --cached --quiet; then
-            git commit -m "docs: refresh actual app screenshots [skip ci]"
-            git push origin HEAD:main
-          fi
       - name: Upload screenshot
         uses: actions/upload-artifact@v4
         with:
