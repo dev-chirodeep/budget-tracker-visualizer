@@ -1,92 +1,77 @@
-# 💼 Budget Tracker & Visualizer
+# Budget Tracker & Visualizer
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
-[![Status](https://img.shields.io/badge/status-Completed-brightgreen.svg)]()
+A desktop expense tracker built with **Python, Tkinter, SQLite, pandas, Matplotlib, and FPDF**. It stores expenses locally and supports reporting and export. This project was developed as an internship application and is intended for personal/local use.
 
-A Tkinter-based GUI application to manage your daily expenses, visualize them with dynamic charts, and export reports into CSV, Excel, or PDF formats.  
-Built for **personal finance tracking** in an easy and beautiful way! 🚀
+## Features
 
----
+- **Add, edit, search and delete expenses**. Double-click a row or use **Edit selected**, then **Save changes**.
+- Store expenses persistently in an SQLite database with a stable primary-key ID.
+- Search by payee, description, category, payment mode or date.
+- See total spending and generate bar charts by payment method, payee, category or month; category-wise pie chart.
+- Export all recorded expenses to **CSV, Excel (.xlsx), or PDF**.
+- Validate dates, required text fields and positive finite amounts; use parameterized SQL for user-provided values.
+- Confirm deletions before removing entries.
 
-## ✨ Features
+## Screenshots
 
-- 📅 Add new expenses with date, purpose, cost, and payment method
-- 📊 Visualize your spending with **Pie Chart** and **Bar Chart**
-- 💾 Store data locally in **SQLite3 database**
-- 📤 Export data to **CSV**, **Excel (.xlsx)**, and **PDF**
-- 🔥 Stylish GUI with **Tkinter** and **emojis**
-- 📈 Monthly/Receiver/Payment method trend analysis
-- 📅 Integrated Calendar picker for dates
+| Dashboard | Category pie chart |
+|---|---|
+| ![Dashboard](Images/Dashboard.png) | ![Pie Chart](Images/Pie%20Chart.png) |
 
----
-## 🛠️ Installation
-To run the Budget Tracker & Visualizer application, you need to install the following Python packages:
-```bash 
-pip install pandas
-pip install matplotlib
-pip install tkcalendar
-pip install fpdf
-pip install openpyxl
+| Export choices | Bar chart |
+|---|---|
+| ![Export](Images/Export.png) | ![Bar Chart](Images/Bar%20chart.png) |
+
+*Screenshots are from an earlier version of the interface; controls and placement may differ in the updated release.*
+
+## Requirements
+
+- Python 3.10 or later with Tkinter (included in most standard Windows Python installations).
+- Install Python dependencies:
+
+```bash
+python -m pip install -r requirements.txt
 ```
----
-## 📸 Screenshots
 
-| Dashboard (Form)             | Pie Chart (Spending Distribution)  |
-|---------------------------------------|------------------------------------|
-| ![Form](https://github.com/yoboi-exe/budget-tracker-visualizer/blob/main/Images/Dashboard.png?raw=true) | ![Pie Chart](https://github.com/yoboi-exe/budget-tracker-visualizer/blob/main/Images/Pie%20Chart.png?raw=true) |
+## Run
 
-| Export Options                       | Bar Chart (By Payment Method)       |
-|---------------------------------------|-------------------------------------|
-| ![Export](https://github.com/yoboi-exe/budget-tracker-visualizer/blob/main/Images/Export.png?raw=true) | ![Bar Chart](https://github.com/yoboi-exe/budget-tracker-visualizer/blob/main/Images/Bar%20chart.png?raw=true) |
+```bash
+python main.py
+```
 
----
+The application reads/writes `expenses.db` next to `main.py`. **Back up your existing `expenses.db` before updating.** The original `ExpenseLog` table schema is preserved; existing records are not automatically deleted or migrated. Do not publish personal spending data.
 
-## 🛠 Built With
+## Tests
 
-- [Python 3.10+](https://www.python.org/)
-- [Tkinter](https://docs.python.org/3/library/tkinter.html)
-- [SQLite3](https://www.sqlite.org/index.html)
-- [Pandas](https://pandas.pydata.org/)
-- [Matplotlib](https://matplotlib.org/)
-- [FPDF](https://pyfpdf.github.io/fpdf2/)
-- [tkcalendar](https://github.com/j4321/tkcalendar)
+```bash
+python -m unittest discover -s tests -v
+```
 
----
+Tests create temporary databases and exercise expense CRUD, search, validation, aggregation and exports. They do not modify your personal `expenses.db`.
 
-## 📚 Future Enhancements
+## Performance benchmarking
 
-👥 User login system (multi-user support)
+```bash
+python benchmark.py --rows 1000 --repeats 7
+```
 
-☁️ Cloud backup and sync
+This generates **synthetic** expenses in a temporary database, times four SQL aggregation queries and three exports, and writes `benchmark_results.csv` locally. Results are machine-dependent and exclude human interaction and GUI rendering. Do not report a percentage improvement unless you measure a comparable baseline separately. The benchmark is independent of your personal data.
 
-🔔 Spending limit alerts
+## Data and security notes
 
-📱 Mobile app version (Flutter/Kivy)
+- `.gitignore` excludes database files and temporary benchmark outputs from future commits. Existing database files committed in the past may remain tracked; remove them separately after backing up and checking for sensitive information.
+- SQLite writes are handled through parameterized statements; reporting dimensions use a fixed allowlist.
+- There is no authentication, synchronization, cloud backup or multi-user support.
+- PDF output uses a standard built-in font; unsupported Unicode symbols may be replaced with `?`.
 
-🎨 More advanced analytics with Plotly
+## Source files
 
----
+- `main.py`: Tkinter application and charts
+- `storage.py`: SQLite data access and validation
+- `reporting.py`: CSV, XLSX and PDF exports
+- `tests/test_storage.py`: tests
+- `benchmark.py`: reproducible synthetic benchmark
 
-## 📈 Conclusion
-The Budget Tracker & Visualizer is a simple yet powerful tool for managing personal finances. With an intuitive interface, dynamic visualizations, and export features, it makes tracking daily expenses both easy and efficient.
-This project also showcases practical implementation of Python GUI, databases, and data visualization — making it a strong base for future enhancements.
+## License
 
----
-
-Feel free to contribute, raise issues, or fork the repository to make your own enhancements. Your feedback is highly appreciated!
-
----
-## 🤝 How to Contribute
-
-1. **Fork** the repository.
-2. **Create a new branch**  
-   `git checkout -b feature-branch`
-3. **Make your changes**
-4. **Commit your changes**  
-   `git commit -m 'Add some feature'`
-5. **Push to your branch**  
-   `git push origin feature-branch`
-6. **Open a Pull Request** 🚀
-
-Happy Coding!
+See `License.txt`.
